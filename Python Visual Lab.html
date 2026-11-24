@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Visual Lab</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#1d2433;--muted:#5d6678;--accent:#3776ab;--accent2:#f5b700;--ok:#2e9e6b;--code:#111827;--codetext:#e5e7eb;--line:#d9deea;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--card:#1b2030;--text:#e8ebf3;--muted:#a1a9bb;--accent:#6fb1e8;--accent2:#f5c542;--ok:#4ccb94;--code:#0a0d14;--codetext:#e5e7eb;--line:#2e3550}}
+:root[data-theme="dark"]{--bg:#12151c;--card:#1b2030;--text:#e8ebf3;--muted:#a1a9bb;--accent:#6fb1e8;--accent2:#f5c542;--ok:#4ccb94;--code:#0a0d14;--codetext:#e5e7eb;--line:#2e3550}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6}
+header{text-align:center;padding:32px 16px 12px}
+h1{margin:0;font-size:clamp(1.8rem,5vw,2.6rem)}
+h1 span{color:var(--accent)}
+header p{color:var(--muted);max-width:620px;margin:8px auto 0}
+nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:16px}
+nav button{border:1px solid var(--line);background:var(--card);color:var(--text);padding:9px 16px;border-radius:999px;cursor:pointer;font-size:.95rem;transition:.2s}
+nav button:hover{border-color:var(--accent)}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:860px;margin:0 auto;padding:0 16px 48px}
+section{display:none;animation:fade .4s}
+section.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+h2{margin:0 0 6px}h3{margin:0 0 10px;font-size:1.05rem;color:var(--accent)}
+.idea{border-left:4px solid var(--accent2);padding-left:12px;color:var(--muted)}
+pre{background:var(--code);color:var(--codetext);padding:12px 14px;border-radius:10px;overflow-x:auto;margin:10px 0;font-size:.9rem}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font-size:.95rem;max-width:100%}
+input[type=range]{padding:0}
+.btn{background:var(--accent);color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:.95rem}
+.btn.alt{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn:active{transform:scale(.97)}
+.stage{min-height:110px;border:1px dashed var(--line);border-radius:10px;padding:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.box{min-width:84px;border:2px solid var(--accent);border-radius:10px;text-align:center;overflow:hidden;background:var(--bg)}
+.box .n{background:var(--accent);color:#fff;font-size:.8rem;padding:2px 6px}
+.box .v{padding:10px 8px;font-weight:700;font-size:1.1rem;word-break:break-all}
+.box small{display:block;color:var(--muted);font-weight:400;font-size:.7rem}
+.flash{animation:flash .8s}
+@keyframes flash{0%{transform:scale(1.25);background:var(--accent2)}100%{transform:scale(1)}}
+.out{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--code);color:#7ee787;border-radius:10px;padding:10px 14px;min-height:44px;font-size:.9rem}
+.out div{animation:fade .3s}
+.chart{display:flex;align-items:flex-end;gap:6px;height:170px;border-left:2px solid var(--muted);border-bottom:2px solid var(--muted);padding:4px 6px 0}
+.bar{flex:1;background:linear-gradient(var(--accent),var(--accent2));border-radius:5px 5px 0 0;height:0;transition:height .5s;position:relative;min-width:12px}
+.bar b{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:.75rem;color:var(--text)}
+.axis{text-align:center;color:var(--muted);font-size:.8rem;margin-top:4px}
+.cells{display:flex;gap:6px;flex-wrap:wrap}
+.cell{width:60px;text-align:center;animation:pop .4s}
+.cell div{border:2px solid var(--accent);border-radius:8px;padding:10px 0;font-weight:700;background:var(--bg)}
+.cell small{color:var(--muted)}
+.cell.hit div{background:var(--accent2);color:#000}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.machine{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:14px}
+.chip{min-width:64px;min-height:44px;padding:10px;border-radius:999px;background:var(--bg);border:2px solid var(--accent);text-align:center;font-weight:700;opacity:.25;transition:.4s}
+.chip.show{opacity:1;transform:scale(1.1)}
+.gear{padding:16px 20px;border-radius:12px;background:var(--code);color:var(--codetext);font-family:ui-monospace,monospace;transition:.3s}
+.gear.run{box-shadow:0 0 0 4px var(--accent2);transform:scale(1.06)}
+.arrow{font-size:1.5rem;color:var(--muted)}
+.stack{display:flex;flex-direction:column-reverse;gap:6px;min-height:80px}
+.frame{background:var(--bg);border:2px solid var(--accent);border-radius:8px;padding:8px 12px;font-family:ui-monospace,monospace;animation:pop .3s;transform-origin:bottom}
+.frame.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--bg))}
+.vids a{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-top:8px;text-decoration:none;color:var(--text)}
+.vids a:hover{border-color:#e62117}
+.vids .yt{background:#e62117;color:#fff;border-radius:6px;padding:2px 8px;font-size:.8rem;font-weight:700}
+.quiz button{display:block;width:100%;text-align:left;margin-top:6px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);cursor:pointer}
+.quiz button.good{background:var(--ok);color:#fff}.quiz button.bad{background:#d64545;color:#fff}
+footer{text-align:center;color:var(--muted);padding:16px;font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>🐍 Python <span>Visual Lab</span></h1>
+  <p>Click, type and watch. Each concept has a short idea, a live animation and a video to go deeper.</p>
+</header>
+<nav id="tabs"></nav>
+<main>
+
+<section id="variables">
+  <div class="card">
+    <h2>Variables</h2>
+    <p class="idea">Think of a variable as a labelled box. The label is the name, and the box holds a value. Assigning again replaces what is inside.</p>
+    <pre>name = value</pre>
+    <div class="controls">
+      <input id="vName" placeholder="name (e.g. age)" value="age" size="12">
+      <span>=</span>
+      <input id="vVal" placeholder="value (e.g. 15 or hello)" value="15" size="14">
+      <button class="btn" id="vGo">Assign</button>
+      <button class="btn alt" id="vClear">Clear</button>
+    </div>
+    <pre id="vCode"># your code appears here</pre>
+    <div class="stage" id="vStage"></div>
+    <p class="idea">Try assigning the same name twice, then try a number and then text. Python figures out the type for you.</p>
+  </div>
+  <div class="card vids"><h3>Watch &amp; learn</h3>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+variables+for+beginners"><span class="yt">▶ YouTube</span> Python variables for beginners</a>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+data+types+explained"><span class="yt">▶ YouTube</span> Python data types explained</a>
+  </div>
+</section>
+
+<section id="loops">
+  <div class="card">
+    <h2>Loops</h2>
+    <p class="idea">A loop repeats a block of code so you do not have to write it again and again. Here the loop squares each number and the graph grows with it.</p>
+    <pre id="lCode">for i in range(5):
+    print(i * i)</pre>
+    <div class="controls">
+      <label>Repeat <b id="lN">5</b> times <input type="range" id="lRange" min="1" max="10" value="5"></label>
+      <button class="btn" id="lGo">Run loop</button>
+    </div>
+    <div class="out" id="lOut"></div>
+    <h3 style="margin-top:14px">Graph of i × i</h3>
+    <div class="chart" id="lChart"></div>
+    <div class="axis">i (loop counter) →</div>
+  </div>
+  <div class="card vids"><h3>Watch &amp; learn</h3>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+for+loop+explained+visually"><span class="yt">▶ YouTube</span> Python for loops explained visually</a>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+while+loop+tutorial"><span class="yt">▶ YouTube</span> Python while loop tutorial</a>
+  </div>
+</section>
+
+<section id="lists">
+  <div class="card">
+    <h2>Lists</h2>
+    <p class="idea">A list stores many values in order. Each item has an index, and counting starts at <b>0</b>, not 1.</p>
+    <div class="controls">
+      <input id="liVal" placeholder="item" value="mango" size="10">
+      <button class="btn" id="liAdd">append()</button>
+      <button class="btn alt" id="liPop">pop()</button>
+      <input id="liIdx" type="number" value="0" style="width:70px">
+      <button class="btn alt" id="liGet">Get by index</button>
+    </div>
+    <pre id="liCode">fruits = ["apple", "banana", "cherry"]</pre>
+    <div class="cells" id="liCells"></div>
+    <div class="out" id="liOut" style="margin-top:10px">len(fruits) → 3</div>
+  </div>
+  <div class="card vids"><h3>Watch &amp; learn</h3>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+lists+tutorial+for+beginners"><span class="yt">▶ YouTube</span> Python lists tutorial for beginners</a>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+indexing+and+slicing+explained"><span class="yt">▶ YouTube</span> Indexing and slicing explained</a>
+  </div>
+</section>
+
+<section id="functions">
+  <div class="card">
+    <h2>Functions</h2>
+    <p class="idea">A function is a machine. Put something in, it does its job, and something comes out. You write it once and reuse it anywhere.</p>
+    <div class="controls">
+      <select id="fSel">
+        <option value="square">square(x)</option>
+        <option value="double">double(x)</option>
+        <option value="even">is_even(x)</option>
+      </select>
+      <input id="fIn" type="number" value="4" style="width:90px">
+      <button class="btn" id="fGo">Call function</button>
+    </div>
+    <pre id="fCode"></pre>
+    <div class="machine">
+      <div class="chip" id="fA">in</div><div class="arrow">➜</div>
+      <div class="gear" id="fG">⚙ square()</div><div class="arrow">➜</div>
+      <div class="chip" id="fB">out</div>
+    </div>
+  </div>
+  <div class="card vids"><h3>Watch &amp; learn</h3>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+functions+explained+for+beginners"><span class="yt">▶ YouTube</span> Python functions explained for beginners</a>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+return+vs+print"><span class="yt">▶ YouTube</span> return vs print in Python</a>
+  </div>
+</section>
+
+<section id="recursion">
+  <div class="card">
+    <h2>Recursion</h2>
+    <p class="idea">Recursion is a function that calls itself on a smaller problem until it reaches a simple base case. Watch the call stack grow, then collapse as answers return.</p>
+    <pre>def factorial(n):
+    if n == 1:
+        return 1          # base case
+    return n * factorial(n - 1)</pre>
+    <div class="controls">
+      <label>n = <b id="rN">4</b> <input type="range" id="rRange" min="1" max="6" value="4"></label>
+      <button class="btn" id="rGo">Run factorial(n)</button>
+    </div>
+    <div class="stack" id="rStack"></div>
+    <div class="out" id="rOut" style="margin-top:10px">Result appears here</div>
+  </div>
+  <div class="card vids"><h3>Watch &amp; learn</h3>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=recursion+python+explained+call+stack"><span class="yt">▶ YouTube</span> Recursion and the call stack explained</a>
+    <a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=python+factorial+recursion"><span class="yt">▶ YouTube</span> Factorial with recursion in Python</a>
+  </div>
+</section>
+
+<section id="quiz">
+  <div class="card quiz">
+    <h2>Quick check</h2>
+    <div id="qBox"></div>
+    <div class="out" id="qScore" style="margin-top:12px">Score: 0 / 0</div>
+  </div>
+</section>
+</main>
+<footer>Made for curious learners. Videos open on YouTube in a new tab.</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- Tabs ---------- */
+const topics = [["variables","Variables"],["loops","Loops"],["lists","Lists"],["functions","Functions"],["recursion","Recursion"],["quiz","Quiz"]];
+topics.forEach(([id,label],i) => {
+  const b = document.createElement("button");
+  b.textContent = label;
+  b.onclick = () => show(id);
+  b.dataset.id = id;
+  $("tabs").appendChild(b);
+});
+function show(id){
+  document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === id));
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+}
+show("variables");
+
+/* ---------- Variables ---------- */
+const vars = {};
+function fmt(v){ return isNaN(v) || v.trim()==="" ? {txt:'"'+v+'"', type:"str"} : {txt:String(Number(v)), type: v.includes(".")?"float":"int"}; }
+function renderVars(flashName){
+  const st = $("vStage"); st.innerHTML = "";
+  Object.entries(vars).forEach(([n,v]) => {
+    const d = document.createElement("div");
+    d.className = "box" + (n===flashName ? " flash" : "");
+    const a = document.createElement("div"); a.className="n"; a.textContent=n;
+    const b = document.createElement("div"); b.className="v"; b.textContent=v.txt;
+    const t = document.createElement("small"); t.textContent=v.type;
+    b.appendChild(t); d.append(a,b); st.appendChild(d);
+  });
+}
+$("vGo").onclick = () => {
+  const n = $("vName").value.trim(), val = $("vVal").value;
+  if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(n)){ $("vCode").textContent = "# Names must start with a letter or _ and have no spaces"; return; }
+  vars[n] = fmt(val);
+  $("vCode").textContent = n + " = " + vars[n].txt + "    # type: " + vars[n].type;
+  renderVars(n);
+};
+$("vClear").onclick = () => { for(const k in vars) delete vars[k]; renderVars(); $("vCode").textContent = "# your code appears here"; };
+
+/* ---------- Loops ---------- */
+$("lRange").oninput = e => { $("lN").textContent = e.target.value; $("lCode").textContent = "for i in range("+e.target.value+"):\n    print(i * i)"; };
+let loopRun = 0;
+$("lGo").onclick = async () => {
+  const n = +$("lRange").value, id = ++loopRun;
+  const out = $("lOut"), ch = $("lChart");
+  out.innerHTML = ""; ch.innerHTML = "";
+  const max = (n-1)*(n-1) || 1;
+  const bars = [];
+  for(let i=0;i<n;i++){
+    const b = document.createElement("div"); b.className="bar";
+    const l = document.createElement("b"); l.textContent = i*i; b.appendChild(l);
+    ch.appendChild(b); bars.push(b);
+  }
+  for(let i=0;i<n;i++){
+    if(id!==loopRun) return;
+    const d = document.createElement("div"); d.textContent = "i = "+i+"  →  "+(i*i); out.appendChild(d);
+    bars[i].style.height = Math.max(4, (i*i/max)*88)+"%";
+    await sleep(450);
+  }
+};
+
+/* ---------- Lists ---------- */
+const fruits = ["apple","banana","cherry"];
+function renderList(hit){
+  const c = $("liCells"); c.innerHTML = "";
+  fruits.forEach((f,i) => {
+    const d = document.createElement("div"); d.className = "cell" + (i===hit?" hit":"");
+    const a = document.createElement("div"); a.textContent = f;
+    const s = document.createElement("small"); s.textContent = "index " + i;
+    d.append(a,s); c.appendChild(d);
+  });
+  $("liCode").textContent = "fruits = " + JSON.stringify(fruits);
+}
+renderList();
+$("liAdd").onclick = () => {
+  const v = $("liVal").value.trim(); if(!v) return;
+  fruits.push(v); renderList();
+  $("liOut").textContent = 'fruits.append("'+v+'")  →  len = '+fruits.length;
+};
+$("liPop").onclick = () => {
+  if(!fruits.length){ $("liOut").textContent = "IndexError: pop from empty list"; return; }
+  const v = fruits.pop(); renderList();
+  $("liOut").textContent = "fruits.pop()  →  "+v+"  (len = "+fruits.length+")";
+};
+$("liGet").onclick = () => {
+  const i = parseInt($("liIdx").value,10);
+  const real = i < 0 ? fruits.length + i : i;
+  if(isNaN(i) || real<0 || real>=fruits.length){ renderList(); $("liOut").textContent = "IndexError: list index out of range"; return; }
+  renderList(real);
+  $("liOut").textContent = "fruits["+i+"]  →  "+fruits[real] + (i<0 ? "   (negative index counts from the end)" : "");
+};
+
+/* ---------- Functions ---------- */
+const fns = {
+  square:{code:"def square(x):\n    return x * x", f:x=>x*x},
+  double:{code:"def double(x):\n    return x * 2", f:x=>x*2},
+  even:{code:"def is_even(x):\n    return x % 2 == 0", f:x=>x%2===0 ? "True":"False"}
+};
+function fnLabel(){ const k=$("fSel").value; $("fCode").textContent = fns[k].code + "\n\n" + k.replace("even","is_even") + "(" + $("fIn").value + ")"; $("fG").textContent = "⚙ " + k.replace("even","is_even") + "()"; }
+$("fSel").onchange = $("fIn").oninput = fnLabel; fnLabel();
+$("fGo").onclick = async () => {
+  const k = $("fSel").value, x = Number($("fIn").value);
+  const A=$("fA"),B=$("fB"),G=$("fG");
+  A.classList.remove("show"); B.classList.remove("show"); B.textContent="out";
+  A.textContent = x; A.classList.add("show"); await sleep(600);
+  G.classList.add("run"); await sleep(700); G.classList.remove("run");
+  B.textContent = fns[k].f(x); B.classList.add("show");
+};
+
+/* ---------- Recursion ---------- */
+$("rRange").oninput = e => $("rN").textContent = e.target.value;
+let recRun = 0;
+$("rGo").onclick = async () => {
+  const n = +$("rRange").value, id = ++recRun, st = $("rStack");
+  st.innerHTML = ""; $("rOut").textContent = "Calling…";
+  const frames = [];
+  for(let i=n;i>=1;i--){
+    if(id!==recRun) return;
+    const f = document.createElement("div"); f.className="frame";
+    f.textContent = "factorial("+i+")" + (i===1 ? "  ← base case" : "  waits for factorial("+(i-1)+")");
+    st.appendChild(f); frames.push(f); await sleep(700);
+  }
+  let val = 1;
+  for(let i=1;i<=n;i++){
+    if(id!==recRun) return;
+    val *= i;
+    const f = frames[n-i];
+    f.classList.add("done"); f.textContent = "factorial("+i+") returns "+val;
+    $("rOut").textContent = "factorial("+i+") = "+val;
+    await sleep(700);
+    if(i<n){ f.remove(); }
+  }
+  $("rOut").textContent = "factorial("+n+") = "+val+"  ✔";
+};
+
+/* ---------- Quiz ---------- */
+const qs = [
+  {q:"What is the index of the first item in a Python list?", o:["0","1","-1"], a:0},
+  {q:"What does range(3) produce?", o:["1, 2, 3","0, 1, 2","0, 1, 2, 3"], a:1},
+  {q:"Every recursive function needs a…", o:["loop","base case","list"], a:1},
+  {q:"Which keyword sends a value out of a function?", o:["return","print","give"], a:0}
+];
+let qi = 0, score = 0;
+function renderQ(){
+  const box = $("qBox"); box.innerHTML = "";
+  if(qi>=qs.length){ box.textContent = "All done! You scored "+score+" out of "+qs.length+"."; const r=document.createElement("button"); r.className="btn"; r.style.width="auto"; r.textContent="Try again"; r.onclick=()=>{qi=0;score=0;$("qScore").textContent="Score: 0 / 0";renderQ();}; box.appendChild(r); return; }
+  const p = document.createElement("p"); p.innerHTML = "<b>Q"+(qi+1)+".</b> "; p.append(qs[qi].q); box.appendChild(p);
+  qs[qi].o.forEach((t,i) => {
+    const b = document.createElement("button"); b.textContent = t;
+    b.onclick = () => {
+      box.querySelectorAll("button").forEach(x => x.disabled = true);
+      const ok = i===qs[qi].a; if(ok) score++;
+      b.classList.add(ok?"good":"bad");
+      if(!ok) box.querySelectorAll("button")[qs[qi].a].classList.add("good");
+      $("qScore").textContent = "Score: "+score+" / "+(qi+1);
+      setTimeout(()=>{qi++;renderQ();},1100);
+    };
+    box.appendChild(b);
+  });
+}
+renderQ();
+</script>
+</body>
+</html>
